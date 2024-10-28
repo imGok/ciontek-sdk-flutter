@@ -1,7 +1,7 @@
 name: ciontek
-description: "A new Flutter plugin project."
+description: "Wrapper for Ciontek SDK, with this package you can print text"
 version: 0.0.1
-homepage:
+homepage: https://github.com/imGok/ciontek-sdk-flutter
 
 environment:
   sdk: ^3.5.3
