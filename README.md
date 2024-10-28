@@ -5,7 +5,7 @@ Only works on Android devices, especially on Ciontek devices.
 ## Installation
 
 ```
-flutter pub add ciontek_printer
+flutter pub add ciontek
 ```
 
 ## Tested Devices
