@@ -1,15 +1,39 @@
-# ciontek
+A Flutter plugin to use the Ciontek built-in printer.
+This plugin is a wrapper around the Ciontek SDK for Android.
+Only works on Android devices, especially on Ciontek devices.
 
-A new Flutter plugin project.
+## Installation
 
-## Getting Started
+```
+flutter pub add ciontek_printer
+```
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/to/develop-plugins),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+## Tested Devices
+```
+Ciontek CS50C
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
+## Exemple Code
+```dart
+await _ciontekPlugin.print(
+  lines: [
+    CiontekPrintLine(
+      text: 'Hello, World!',
+      bold: true,
+      increaseFontSize: true,
+      textGray: TextGray.medium,
+      underline: true,
+    ),
+    CiontekPrintLine(
+      text: 'Good bye !',
+      reverse: true,
+      textGray: TextGray.highest,
+    ),
+    CiontekPrintLine.feedPaper(lines: 1),
+    CiontekPrintLine(
+      text: 'Welcome back ! \n \n',
+      underline: true,
+    ),
+  ],
+);
+```
