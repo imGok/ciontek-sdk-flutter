@@ -27,11 +27,16 @@ class _MyAppState extends State<MyApp> {
     await _ciontekPlugin.print(
       lines: [
         CiontekPrintLine(
-          text: 'Hello, World!',
+          text:
+              "Hello, this is a test print! Pho is the first thing you seek upon landing in Vietnam, always choosing vendors crowded with locals rather than tourists!",
           bold: true,
           increaseFontSize: true,
           textGray: TextGray.medium,
           underline: true,
+        ),
+        CiontekPrintLine(
+          text: '------------------------------------------------',
+          textGray: TextGray.medium,
         ),
         CiontekPrintLine(
           text: 'Good bye !',
@@ -40,9 +45,10 @@ class _MyAppState extends State<MyApp> {
         ),
         CiontekPrintLine.feedPaper(lines: 1),
         CiontekPrintLine(
-          text: 'Welcome back ! \n \n',
+          text: 'Welcome back !',
           underline: true,
         ),
+        CiontekPrintLine.feedPaper(lines: 3),
       ],
     );
   }
@@ -52,13 +58,13 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Ciontek SDK Example'),
+          title: const Text('Ciontek Print Example'),
         ),
         body: Center(
           child: OutlinedButton(
             style: OutlinedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              side: const BorderSide(color: Colors.blue, width: 2),
+              backgroundColor: Colors.purple,
+              side: BorderSide.none,
             ),
             onPressed: print,
             child: const Text(

@@ -18,19 +18,10 @@ object CiontekLineHelper {
     }
 
     @Synchronized
-    fun resetLine() {
-        posApiHelper.PrintSetBold(0)
-        posApiHelper.PrintSetReverse(0)
-        posApiHelper.PrintSetFont(16.toByte(), 16.toByte(), 0x33.toByte())
-        posApiHelper.PrintSetGray(3)
-        posApiHelper.PrintSetUnderline(0)
-    }
-
-    @Synchronized
     fun print(line: PrintLine) {
+        posApiHelper.PrintInit()
         initLine(line)
         posApiHelper.PrintStr(line.text)
         posApiHelper.PrintStart()
-        resetLine()
     }
 }
