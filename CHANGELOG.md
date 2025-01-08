@@ -6,3 +6,7 @@
 
 - Added PrintInit before printing
 - Updated the example code
+
+## 0.0.2+1
+
+- Upgraded Dependencies
