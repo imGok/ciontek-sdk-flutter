@@ -7,16 +7,12 @@ class CiontekPrintLine {
   final String text;
   final TextGray textGray;
   final bool bold;
-  final bool increaseFontSize;
-  final bool reverse;
   final bool underline;
 
   CiontekPrintLine({
     required this.text,
     this.textGray = TextGray.medium,
     this.bold = false,
-    this.increaseFontSize = false,
-    this.reverse = false,
     this.underline = false,
   });
 
@@ -32,8 +28,6 @@ class CiontekPrintLine {
       'text': text,
       'textGray': textGray.index + 1,
       'bold': bold,
-      'increaseFontSize': increaseFontSize,
-      'reverse': reverse,
       'underline': underline,
     };
   }

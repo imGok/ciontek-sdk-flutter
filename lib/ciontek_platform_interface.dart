@@ -24,7 +24,7 @@ abstract class CiontekPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> print(List<CiontekPrintLine> lines) {
+  Future<String?> printLine(List<CiontekPrintLine> lines) {
     throw UnimplementedError('print() has not been implemented.');
   }
 }

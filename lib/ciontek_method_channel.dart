@@ -11,8 +11,11 @@ class MethodChannelCiontek extends CiontekPlatform {
   final methodChannel = const MethodChannel('ciontek');
 
   @override
-  Future<String?> print(List<CiontekPrintLine> lines) async {
-    final result = await methodChannel.invokeMethod<String>('print', lines.toMap());
+  Future<String?> printLine(List<CiontekPrintLine> lines) async {
+    final result = await methodChannel.invokeMethod<String>(
+      'print',
+      lines.toMap(),
+    );
     return result;
   }
 }

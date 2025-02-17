@@ -2,23 +2,19 @@ package com.imgok.ciontek
 
 import com.ctk.sdk.PosApiHelper
 
-object CiontekLineHelper {
+object CiontekPrintHelper {
     private val posApiHelper: PosApiHelper = PosApiHelper.getInstance()
 
     @Synchronized
     fun initLine(line: PrintLine) {
         posApiHelper.PrintSetBold(if (line.bold) 1 else 0)
-        posApiHelper.PrintSetReverse(if (line.reverse) 1 else 0)
-        if (line.increaseFontSize) {
-            posApiHelper.PrintSetFont(24.toByte(), 24.toByte(), 0x00.toByte())
-        }
-
         posApiHelper.PrintSetUnderline(if (line.underline) 1 else 0)
         posApiHelper.PrintSetGray(line.textGray)
+        posApiHelper.PrintSetAlign(1)
     }
 
     @Synchronized
-    fun print(line: PrintLine) {
+    fun printLine(line: PrintLine) {
         posApiHelper.PrintInit()
         initLine(line)
         posApiHelper.PrintStr(line.text)

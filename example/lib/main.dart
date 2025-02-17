@@ -23,14 +23,13 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-  Future<void> print() async {
-    await _ciontekPlugin.print(
+  Future<void> printTest() async {
+    await _ciontekPlugin.printLine(
       lines: [
         CiontekPrintLine(
           text:
               "Hello, this is a test print! Pho is the first thing you seek upon landing in Vietnam, always choosing vendors crowded with locals rather than tourists!",
           bold: true,
-          increaseFontSize: true,
           textGray: TextGray.medium,
           underline: true,
         ),
@@ -40,7 +39,6 @@ class _MyAppState extends State<MyApp> {
         ),
         CiontekPrintLine(
           text: 'Good bye !',
-          reverse: true,
           textGray: TextGray.highest,
         ),
         CiontekPrintLine.feedPaper(lines: 1),
@@ -66,7 +64,7 @@ class _MyAppState extends State<MyApp> {
               backgroundColor: Colors.purple,
               side: BorderSide.none,
             ),
-            onPressed: print,
+            onPressed: printTest,
             child: const Text(
               'Print something!',
               style: TextStyle(

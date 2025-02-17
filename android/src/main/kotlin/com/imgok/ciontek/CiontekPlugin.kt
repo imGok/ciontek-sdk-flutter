@@ -22,22 +22,33 @@ class CiontekPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
+        val checkStatus = posApiHelper.PrintCheckStatus()
+
+        if (checkStatus == -1) {
+            result.error("NO_PAPER_ERROR", "Error, No Paper", null)
+            return
+        }
+
+        if (checkStatus == -2) {
+            result.error("PRINTER_TOO_HOT", "Error, Printer Too Hot", null)
+            return
+        }
+
+        if (checkStatus == -3) {
+            result.error("LOW_BATTERY", "Error, Low Battery", null)
+            return
+        }
+
         when (call.method) {
             "print" -> {
                 val lines = call.argument<List<Map<String, Any>>>("lines")
                 if (!lines.isNullOrEmpty()) {
-                    val checkStatus = posApiHelper.PrintCheckStatus()
-                    if (checkStatus != 0) {
-                        result.error("PRINT_ERROR", "Failed to check status", null)
-                        return
-                    }
-
                     val parsedLine = lines.map { line ->
                         PrintLine.fromMap(line)
                     }
 
                     for (line in parsedLine) {
-                        CiontekLineHelper.print(line)
+                        CiontekPrintHelper.printLine(line)
                     }
                     result.success("Printing")
                 } else {
