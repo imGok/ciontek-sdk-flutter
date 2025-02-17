@@ -19,7 +19,6 @@ class CiontekPlugin : FlutterPlugin, MethodCallHandler {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ciontek")
         channel.setMethodCallHandler(this)
         posApiHelper = PosApiHelper.getInstance()
-
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
