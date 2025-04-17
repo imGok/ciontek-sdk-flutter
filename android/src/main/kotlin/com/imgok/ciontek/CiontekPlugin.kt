@@ -43,6 +43,7 @@ class CiontekPlugin : FlutterPlugin, MethodCallHandler {
             "print" -> {
                 val lines = call.argument<List<Map<String, Any>>>("lines")
                 if (!lines.isNullOrEmpty()) {
+                    CiontekPrintHelper.setupPrinter()
                     val parsedLine = lines.map { line ->
                         PrintLine.fromMap(line)
                     }
