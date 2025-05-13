@@ -30,7 +30,7 @@ object CiontekPrintHelper {
                 posApiHelper.PrintStr(line.text)
             }
             else -> {
-                posApiHelper.PrintBarcode(line.text, 300, 240, line.type)
+                posApiHelper.PrintBarcode(line.text, 200, 240, line.type)
             }
         }
         posApiHelper.PrintStart()
