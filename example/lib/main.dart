@@ -1,3 +1,4 @@
+import 'package:ciontek/ciontek_print_code.dart';
 import 'package:ciontek/ciontek_print_line.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -46,6 +47,21 @@ class _MyAppState extends State<MyApp> {
           text: 'Welcome back !',
           underline: true,
         ),
+        CiontekPrintLine.feedPaper(lines: 4),
+      ],
+    );
+  }
+
+  Future<void> printCode() async {
+    await _ciontekPlugin.printCode(
+      codes: [
+        CiontekPrintCode(
+          data: '12345678',
+        ),
+      ],
+    );
+    await _ciontekPlugin.printLine(
+      lines: [
         CiontekPrintLine.feedPaper(lines: 3),
       ],
     );
@@ -59,19 +75,40 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Ciontek Print Example'),
         ),
         body: Center(
-          child: OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              backgroundColor: Colors.purple,
-              side: BorderSide.none,
-            ),
-            onPressed: printTest,
-            child: const Text(
-              'Print something!',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                  side: BorderSide.none,
+                ),
+                onPressed: printTest,
+                child: const Text(
+                  'Print something!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-            ),
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Colors.amberAccent,
+                  side: BorderSide.none,
+                ),
+                onPressed: printCode,
+                child: const Text(
+                  'Print a code!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

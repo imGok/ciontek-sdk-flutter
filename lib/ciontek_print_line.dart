@@ -19,7 +19,7 @@ class CiontekPrintLine {
   // Feed factory
   factory CiontekPrintLine.feedPaper({int lines = 1}) {
     return CiontekPrintLine(
-      text: '\n' * lines,
+      text: '\n ' * lines,
     );
   }
 

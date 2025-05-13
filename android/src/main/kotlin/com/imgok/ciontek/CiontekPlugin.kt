@@ -22,41 +22,59 @@ class CiontekPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
-        val checkStatus = posApiHelper.PrintCheckStatus()
-
-        if (checkStatus == -1) {
-            result.error("NO_PAPER_ERROR", "Error, No Paper", null)
+        if (!handlePrinterStatus(result)) {
             return
         }
 
-        if (checkStatus == -2) {
-            result.error("PRINTER_TOO_HOT", "Error, Printer Too Hot", null)
-            return
-        }
-
-        if (checkStatus == -3) {
-            result.error("LOW_BATTERY", "Error, Low Battery", null)
-            return
-        }
+        CiontekPrintHelper.setupPrinter()
 
         when (call.method) {
-            "print" -> {
-                val lines = call.argument<List<Map<String, Any>>>("lines")
-                if (!lines.isNullOrEmpty()) {
-                    CiontekPrintHelper.setupPrinter()
-                    val parsedLine = lines.map { line ->
-                        PrintLine.fromMap(line)
-                    }
-
-                    for (line in parsedLine) {
-                        CiontekPrintHelper.printLine(line)
-                    }
-                    result.success("Printing")
-                } else {
-                    result.error("INVALID_ARGUMENT", "Text is required", null)
-                }
-            }
+            "print" -> handlePrint(call, result)
+            "printBarcode" -> handlePrintBarcode(call, result)
+            else -> result.notImplemented()
         }
+    }
+
+    private fun handlePrinterStatus(result: Result): Boolean {
+        return when (posApiHelper.PrintCheckStatus()) {
+            -1 -> {
+                result.error("NO_PAPER_ERROR", "Error, No Paper", null)
+                false
+            }
+            -2 -> {
+                result.error("PRINTER_TOO_HOT", "Error, Printer Too Hot", null)
+                false
+            }
+            -3 -> {
+                result.error("LOW_BATTERY", "Error, Low Battery", null)
+                false
+            }
+            else -> true
+        }
+    }
+
+    private fun handlePrint(call: MethodCall, result: Result) {
+        val lines = call.argument<List<Map<String, Any>>>("lines")
+        if (lines.isNullOrEmpty()) {
+            result.error("INVALID_ARGUMENT", "Text is required", null)
+            return
+        }
+
+        val parsedLines = lines.map { PrintLine.fromMap(it) }
+        parsedLines.forEach { CiontekPrintHelper.printLine(it) }
+        result.success("Printing")
+    }
+
+    private fun handlePrintBarcode(call: MethodCall, result: Result) {
+        val codeMap = call.argument<List<Map<String, Any>>>("codes")
+        if (codeMap.isNullOrEmpty()) {
+            result.error("INVALID_ARGUMENT", "Code is required", null)
+            return
+        }
+
+        val parsedCodes = codeMap.map { PrintCode.fromMap(it) }
+        parsedCodes.forEach { CiontekPrintHelper.printCode(it) }
+        result.success("Printing")
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
