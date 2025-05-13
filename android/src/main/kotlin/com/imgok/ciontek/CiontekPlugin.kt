@@ -30,7 +30,6 @@ class CiontekPlugin : FlutterPlugin, MethodCallHandler {
 
         when (call.method) {
             "print" -> handlePrint(call, result)
-            "printBarcode" -> handlePrintBarcode(call, result)
             else -> result.notImplemented()
         }
     }
@@ -62,18 +61,6 @@ class CiontekPlugin : FlutterPlugin, MethodCallHandler {
 
         val parsedLines = lines.map { PrintLine.fromMap(it) }
         parsedLines.forEach { CiontekPrintHelper.printLine(it) }
-        result.success("Printing")
-    }
-
-    private fun handlePrintBarcode(call: MethodCall, result: Result) {
-        val codeMap = call.argument<List<Map<String, Any>>>("codes")
-        if (codeMap.isNullOrEmpty()) {
-            result.error("INVALID_ARGUMENT", "Code is required", null)
-            return
-        }
-
-        val parsedCodes = codeMap.map { PrintCode.fromMap(it) }
-        parsedCodes.forEach { CiontekPrintHelper.printCode(it) }
         result.success("Printing")
     }
 

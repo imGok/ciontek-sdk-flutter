@@ -1,5 +1,4 @@
-import 'package:ciontek/ciontek_print_code.dart';
-import 'package:ciontek/ciontek_print_line.dart';
+import 'package:ciontek/models/ciontek_print_line.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -47,22 +46,11 @@ class _MyAppState extends State<MyApp> {
           text: 'Welcome back !',
           underline: true,
         ),
-        CiontekPrintLine.feedPaper(lines: 4),
-      ],
-    );
-  }
-
-  Future<void> printCode() async {
-    await _ciontekPlugin.printCode(
-      codes: [
-        CiontekPrintCode(
-          data: '12345678',
+        CiontekPrintLine(
+          text: '12341234',
+          type: CiontekPrintLineType.qrCode,
         ),
-      ],
-    );
-    await _ciontekPlugin.printLine(
-      lines: [
-        CiontekPrintLine.feedPaper(lines: 3),
+        CiontekPrintLine.feedPaper(lines: 4),
       ],
     );
   }
@@ -88,20 +76,6 @@ class _MyAppState extends State<MyApp> {
                 onPressed: printTest,
                 child: const Text(
                   'Print something!',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: Colors.amberAccent,
-                  side: BorderSide.none,
-                ),
-                onPressed: printCode,
-                child: const Text(
-                  'Print a code!',
                   style: TextStyle(
                     fontSize: 20,
                     color: Colors.white,

@@ -1,5 +1,4 @@
-import 'package:ciontek/ciontek_print_code.dart';
-import 'package:ciontek/ciontek_print_line.dart';
+import 'package:ciontek/models/ciontek_print_line.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ciontek/ciontek_platform_interface.dart';
 import 'package:ciontek/ciontek_method_channel.dart';
@@ -10,12 +9,6 @@ class MockCiontekPlatform
     implements CiontekPlatform {
   @override
   Future<String?> printLine(List<CiontekPrintLine> lines) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> printCode(List<CiontekPrintCode> codes) {
-    // TODO: implement printCode
     throw UnimplementedError();
   }
 }

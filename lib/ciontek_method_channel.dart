@@ -1,5 +1,4 @@
-import 'package:ciontek/ciontek_print_code.dart';
-import 'package:ciontek/ciontek_print_line.dart';
+import 'package:ciontek/models/ciontek_print_line.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -16,15 +15,6 @@ class MethodChannelCiontek extends CiontekPlatform {
     final result = await methodChannel.invokeMethod<String>(
       'print',
       lines.toMap(),
-    );
-    return result;
-  }
-
-  @override
-  Future<String?> printCode(List<CiontekPrintCode> codes) async {
-    final result = await methodChannel.invokeMethod<String>(
-      'printBarcode',
-      codes.toMap(),
     );
     return result;
   }

@@ -1,5 +1,4 @@
-import 'package:ciontek/ciontek_print_code.dart';
-import 'package:ciontek/ciontek_print_line.dart';
+import 'package:ciontek/models/ciontek_print_line.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'ciontek_method_channel.dart';
@@ -27,9 +26,5 @@ abstract class CiontekPlatform extends PlatformInterface {
 
   Future<String?> printLine(List<CiontekPrintLine> lines) {
     throw UnimplementedError('printLine() has not been implemented.');
-  }
-
-  Future<String?> printCode(List<CiontekPrintCode> codes) {
-    throw UnimplementedError('printCode() has not been implemented.');
   }
 }

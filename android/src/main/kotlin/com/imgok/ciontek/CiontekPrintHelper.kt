@@ -21,18 +21,18 @@ object CiontekPrintHelper {
         posApiHelper.PrintSetAlign(1)
     }
 
-    @Synchronized
-    fun printCode(code: PrintCode) {
-        posApiHelper.PrintSetAlign(1)
-        posApiHelper.PrintSetGray(0)
-        posApiHelper.PrintBarcode(code.data, code.width, code.height, code.barcodeType)
-        posApiHelper.PrintStart()
-    }
 
     @Synchronized
     fun printLine(line: PrintLine) {
-        setLineSettings(line)
-        posApiHelper.PrintStr(line.text)
+        when (line.type) {
+            "TEXT" -> {
+                setLineSettings(line)
+                posApiHelper.PrintStr(line.text)
+            }
+            else -> {
+                posApiHelper.PrintBarcode(line.text, 300, 240, line.type)
+            }
+        }
         posApiHelper.PrintStart()
     }
 }

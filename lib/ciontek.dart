@@ -1,5 +1,4 @@
-import 'package:ciontek/ciontek_print_code.dart';
-import 'package:ciontek/ciontek_print_line.dart';
+import 'package:ciontek/models/ciontek_print_line.dart';
 
 import 'ciontek_platform_interface.dart';
 
@@ -8,7 +7,4 @@ class Ciontek {
     return CiontekPlatform.instance.printLine(lines);
   }
 
-  Future<String?> printCode({required List<CiontekPrintCode> codes}) {
-    return CiontekPlatform.instance.printCode(codes);
-  }
 }
