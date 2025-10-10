@@ -1,15 +1,20 @@
-import 'package:ciontek/models/ciontek_print_line.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ciontek/ciontek_platform_interface.dart';
 import 'package:ciontek/ciontek_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:ciontek/models/ciontek_print_line.dart';
 
 class MockCiontekPlatform
     with MockPlatformInterfaceMixin
     implements CiontekPlatform {
   @override
-  Future<String?> printLine(List<CiontekPrintLine> lines) {
+    Future<String?> printLine(CiontekPrintLine line) {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<void> setFontPath(String path) async {
+    // no-op for tests
   }
 }
 

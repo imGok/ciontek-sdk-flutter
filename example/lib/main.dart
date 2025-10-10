@@ -1,8 +1,8 @@
-import 'package:ciontek/models/ciontek_print_line.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:ciontek/ciontek.dart';
+import 'package:ciontek/models/ciontek_print_line.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,34 +25,15 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> printTest() async {
     await _ciontekPlugin.printLine(
-      lines: [
-        CiontekPrintLine(
-          text:
-              "Hello, this is a test print! Pho is the first thing you seek upon landing in Vietnam, always choosing vendors crowded with locals rather than tourists!",
-          bold: true,
-          textGray: TextGray.medium,
-          underline: true,
-        ),
-        CiontekPrintLine(
-          text: '------------------------------------------------',
-          textGray: TextGray.medium,
-        ),
-        CiontekPrintLine(
-          text: 'Good bye !',
-          textGray: TextGray.highest,
-        ),
-        CiontekPrintLine.feedPaper(lines: 1),
-        CiontekPrintLine(
-          text: 'Welcome back !',
-          underline: true,
-        ),
-        CiontekPrintLine(
-          text: '12341234',
-          type: CiontekPrintLineType.qrCode,
-        ),
-        CiontekPrintLine.feedPaper(lines: 4),
-      ],
+      line: CiontekPrintLine(
+        text:
+            "Hello, this is a test print! Pho is the first thing you seek upon landing in Vietnam, always choosing vendors crowded with locals rather than tourists!",
+        bold: true,
+        textGray: TextGray.medium,
+        underline: true,
+      ),
     );
+    await _ciontekPlugin.printLine(line: CiontekPrintLine.feedPaper(lines: 5));
   }
 
   @override

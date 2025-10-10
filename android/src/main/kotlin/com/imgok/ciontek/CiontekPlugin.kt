@@ -22,13 +22,8 @@ class CiontekPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
-        if (!handlePrinterStatus(result)) {
-            return
-        }
-
-        CiontekPrintHelper.setupPrinter()
-
         when (call.method) {
+            "setFontPath" -> handleSetFontPath(call, result)
             "print" -> handlePrint(call, result)
             else -> result.notImplemented()
         }
@@ -53,16 +48,34 @@ class CiontekPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun handlePrint(call: MethodCall, result: Result) {
-        val lines = call.argument<List<Map<String, Any>>>("lines")
-        if (lines.isNullOrEmpty()) {
-            result.error("INVALID_ARGUMENT", "Text is required", null)
+        if (!handlePrinterStatus(result)) {
             return
         }
 
-        val parsedLines = lines.map { PrintLine.fromMap(it) }
-        parsedLines.forEach { CiontekPrintHelper.printLine(it) }
+        CiontekPrintHelper.setupPrinter()
+        val maybeMap = call.arguments as? Map<*, *>
+        if (maybeMap == null) {
+            result.error("INVALID_ARGUMENT", "Line map is required", null)
+            return
+        }
+        @Suppress("UNCHECKED_CAST")
+        val map = maybeMap as Map<String, Any>
+        val line = PrintLine.fromMap(map)
+        CiontekPrintHelper.printLine(line)
         result.success("Printing")
     }
+
+    private fun handleSetFontPath(call: MethodCall, result: Result) {
+        val path = call.argument<String>("path")
+        if (path.isNullOrBlank()) {
+            result.error("INVALID_ARGUMENT", "path is required", null)
+            return
+        }
+        CiontekPrintHelper.setFontPath(path)
+        result.success(null)
+    }
+
+    // step method removed
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
