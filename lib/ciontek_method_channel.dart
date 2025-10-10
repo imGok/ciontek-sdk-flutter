@@ -8,7 +8,7 @@ import 'ciontek_platform_interface.dart';
 class MethodChannelCiontek extends CiontekPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  final methodChannel = const MethodChannel('ciontek');
+  final methodChannel = const MethodChannel('ciontek/printer');
 
   @override
   Future<String?> printLine(CiontekPrintLine line) async {
