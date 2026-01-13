@@ -1,4 +1,6 @@
 import 'package:ciontek/models/ciontek_print_line.dart';
+import 'package:ciontek/models/print_result.dart';
+import 'package:ciontek/models/printer_status.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'ciontek_method_channel.dart';
@@ -24,11 +26,15 @@ abstract class CiontekPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> printLine(CiontekPrintLine line) {
+  Future<PrintResult> printLine(CiontekPrintLine line) {
     throw UnimplementedError('printLine() has not been implemented.');
   }
 
   Future<void> setFontPath(String path) {
     throw UnimplementedError('setFontPath() has not been implemented.');
+  }
+
+  Future<PrinterStatus> getPrinterStatus() {
+    throw UnimplementedError('getPrinterStatus() has not been implemented.');
   }
 }

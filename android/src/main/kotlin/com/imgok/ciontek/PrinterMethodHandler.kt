@@ -14,33 +14,36 @@ class PrinterMethodHandler(
         when (call.method) {
             "setFontPath" -> handleSetFontPath(call, result)
             "print" -> handlePrint(call, result)
+            "getPrinterStatus" -> handleGetPrinterStatus(result)
             else -> result.notImplemented()
         }
     }
 
-    private fun handlePrinterStatus(result: Result): Boolean {
-        return when (posApiHelper.PrintCheckStatus()) {
-            -1 -> {
-                result.error("NO_PAPER_ERROR", "Error, No Paper", null)
-                false
-            }
-            -2 -> {
-                result.error("PRINTER_TOO_HOT", "Error, Printer Too Hot", null)
-                false
-            }
-            -3 -> {
-                result.error("LOW_BATTERY", "Error, Low Battery", null)
-                false
-            }
-            else -> true
-        }
+    private fun handleGetPrinterStatus(result: Result) {
+        val status = posApiHelper.PrintCheckStatus()
+        result.success(status)
     }
 
     private fun handlePrint(call: MethodCall, result: Result) {
-        if (!handlePrinterStatus(result)) {
-            return
+        val status = posApiHelper.PrintCheckStatus()
+        
+        // Check printer status first
+        when (status) {
+            -1 -> {
+                result.success(-1)  // No paper
+                return
+            }
+            -2 -> {
+                result.success(-2)  // Too hot
+                return
+            }
+            -3 -> {
+                result.success(-3)  // Low battery
+                return
+            }
         }
 
+        // Printer is ready, proceed with printing
         CiontekPrintHelper.setupPrinter()
         val maybeMap = call.arguments as? Map<*, *>
         if (maybeMap == null) {
@@ -51,7 +54,7 @@ class PrinterMethodHandler(
         val map = maybeMap as Map<String, Any>
         val line = PrintLine.fromMap(map)
         CiontekPrintHelper.printLine(line)
-        result.success("Printing")
+        result.success(0)  // Success
     }
 
     private fun handleSetFontPath(call: MethodCall, result: Result) {

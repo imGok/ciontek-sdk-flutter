@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ciontek/ciontek_platform_interface.dart';
 import 'package:ciontek/ciontek_method_channel.dart';
+import 'package:ciontek/models/print_result.dart';
+import 'package:ciontek/models/printer_status.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:ciontek/models/ciontek_print_line.dart';
 
@@ -8,13 +10,18 @@ class MockCiontekPlatform
     with MockPlatformInterfaceMixin
     implements CiontekPlatform {
   @override
-    Future<String?> printLine(CiontekPrintLine line) {
-    throw UnimplementedError();
+  Future<PrintResult> printLine(CiontekPrintLine line) async {
+    return PrintResult.success;
   }
 
   @override
   Future<void> setFontPath(String path) async {
     // no-op for tests
+  }
+
+  @override
+  Future<PrinterStatus> getPrinterStatus() async {
+    return PrinterStatus.ready;
   }
 }
 

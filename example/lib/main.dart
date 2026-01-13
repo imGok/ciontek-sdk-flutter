@@ -27,7 +27,11 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _scanSub = Ciontek.scanner.onScan.listen((e) {
       setState(() {
-        _lastScan = e.data ?? (e.dataBytes?.map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ') ?? '');
+        _lastScan = e.data ??
+            (e.dataBytes
+                    ?.map((b) => b.toRadixString(16).padLeft(2, '0'))
+                    .join(' ') ??
+                '');
       });
     });
   }
@@ -39,7 +43,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> printTest() async {
-  await Ciontek.printer.printLine(
+    await Ciontek.printer.printLine(
       line: CiontekPrintLine(
         text:
             "Hello, this is a test print! Pho is the first thing you seek upon landing in Vietnam, always choosing vendors crowded with locals rather than tourists!",
@@ -48,7 +52,7 @@ class _MyAppState extends State<MyApp> {
         underline: true,
       ),
     );
-  await Ciontek.printer.printLine(line: CiontekPrintLine.feedPaper(lines: 5));
+    await Ciontek.printer.printLine(line: CiontekPrintLine.feedPaper(lines: 5));
   }
 
   Future<void> startScan() async {
