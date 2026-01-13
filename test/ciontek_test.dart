@@ -15,6 +15,11 @@ class MockCiontekPlatform
   }
 
   @override
+  Future<PrintResult> printLines(List<CiontekPrintLine> lines) async {
+    return PrintResult.success;
+  }
+
+  @override
   Future<void> setFontPath(String path) async {
     // no-op for tests
   }

@@ -14,9 +14,17 @@ class MethodChannelCiontek extends CiontekPlatform {
 
   @override
   Future<PrintResult> printLine(CiontekPrintLine line) async {
+    return printLines([line]);
+  }
+
+  @override
+  Future<PrintResult> printLines(List<CiontekPrintLine> lines) async {
     try {
-      final result =
-          await methodChannel.invokeMethod<int>('print', line.toMap());
+      final linesData = lines.map((e) => e.toMap()).toList();
+      final result = await methodChannel.invokeMethod<int>(
+        'printLines',
+        {'lines': linesData},
+      );
       return PrintResult.fromStatus(result ?? 0);
     } on PlatformException catch (e) {
       // Handle errors from the native side

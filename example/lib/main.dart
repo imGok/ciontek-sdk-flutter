@@ -21,6 +21,7 @@ class _MyAppState extends State<MyApp> {
   StreamSubscription<ScanResult>? _scanSub;
   String? _lastScan;
   int _timeoutSeconds = 4;
+  String? _lastPrintResult;
 
   @override
   void initState() {
@@ -43,16 +44,303 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> printTest() async {
-    await Ciontek.printer.printLine(
-      line: CiontekPrintLine(
-        text:
-            "Hello, this is a test print! Pho is the first thing you seek upon landing in Vietnam, always choosing vendors crowded with locals rather than tourists!",
+    try {
+      setState(() => _lastPrintResult = 'Impression en cours...');
+      
+      final now = DateTime.now();
+      final ticketNumber = 'TKT${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}';
+      
+      final result = await Ciontek.printer.printLines([
+      // En-tête du restaurant
+      const CiontekTextLine(
+        text: 'RESTAURANT LE BON GOUT',
         bold: true,
-        textGray: TextGray.medium,
-        underline: true,
+        textGray: TextGray.highest,
+        alignMode: CiontekAlignMode.center,
       ),
-    );
-    await Ciontek.printer.printLine(line: CiontekPrintLine.feedPaper(lines: 5));
+      const CiontekTextLine(
+        text: '123 Rue de la Paix',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekTextLine(
+        text: '75001 Paris, France',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekTextLine(
+        text: 'Tel: +33 1 23 45 67 89',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekFeedLine(lines: 1),
+      const CiontekTextLine(
+        text: '===========================',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekFeedLine(lines: 1),
+      
+      // Informations de la commande
+      CiontekTextLine(
+        text: 'Date: ${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}',
+      ),
+      CiontekTextLine(
+        text: 'Heure: ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
+      ),
+      CiontekTextLine(
+        text: 'Ticket: $ticketNumber',
+      ),
+      const CiontekTextLine(
+        text: 'Serveur: Marie D.',
+      ),
+      const CiontekTextLine(
+        text: 'Table: 12',
+      ),
+      const CiontekFeedLine(lines: 1),
+      const CiontekTextLine(
+        text: '---------------------------',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekFeedLine(lines: 1),
+      
+      // Articles
+      const CiontekTextLine(
+        text: 'ARTICLES',
+        bold: true,
+        textGray: TextGray.high,
+      ),
+      const CiontekFeedLine(lines: 1),
+      const CiontekTextLine(
+        text: '2x Burger Classique',
+      ),
+      const CiontekTextLine(
+        text: '19.80 EUR',
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekTextLine(
+        text: '1x Pizza Margherita',
+      ),
+      const CiontekTextLine(
+        text: '15.50 EUR',
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekTextLine(
+        text: '2x Coca-Cola',
+      ),
+      const CiontekTextLine(
+        text: '5.00 EUR',
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekTextLine(
+        text: '1x Tiramisu',
+      ),
+      const CiontekTextLine(
+        text: '6.50 EUR',
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekTextLine(
+        text: '1x Cafe expresso',
+      ),
+      const CiontekTextLine(
+        text: '2.50 EUR',
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekFeedLine(lines: 1),
+      const CiontekTextLine(
+        text: '---------------------------',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekFeedLine(lines: 1),
+      
+      // Totaux
+      const CiontekTextLine(
+        text: 'Sous-total    49.30 EUR',
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekTextLine(
+        text: 'TVA (20%)      9.86 EUR',
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekFeedLine(lines: 1),
+      const CiontekTextLine(
+        text: 'TOTAL         59.16 EUR',
+        bold: true,
+        textGray: TextGray.highest,
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekFeedLine(lines: 1),
+      const CiontekTextLine(
+        text: '===========================',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekFeedLine(lines: 2),
+      
+      // Mode de paiement
+      const CiontekTextLine(
+        text: 'PAIEMENT',
+        bold: true,
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekTextLine(
+        text: 'Carte Bancaire',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekFeedLine(lines: 2),
+      
+      // QR Code pour le feedback ou le menu
+      const CiontekTextLine(
+        text: 'Scannez pour un avis',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekFeedLine(lines: 1),
+      CiontekQRCodeLine(
+        data: 'https://restaurant.fr/$ticketNumber',
+        size: 256,
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekFeedLine(lines: 2),
+      
+      // Code-barres du ticket
+      const CiontekTextLine(
+        text: 'Numero de ticket',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekFeedLine(lines: 1),
+      CiontekBarcodeLine(
+        data: ticketNumber,
+        barcodeType: CiontekPrintLineType.code128,
+        width: 380,
+        height: 100,
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekFeedLine(lines: 2),
+      
+      // Message de fin
+      const CiontekTextLine(
+        text: 'Merci de votre visite!',
+        bold: true,
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekTextLine(
+        text: 'A bientot!',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekFeedLine(lines: 1),
+      const CiontekTextLine(
+        text: 'TVA FR 12 345 678 901',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekTextLine(
+        text: 'SIRET: 123 456 789 00012',
+        alignMode: CiontekAlignMode.center,
+      ),
+      
+      // Espace final
+      const CiontekFeedLine(lines: 4),
+      ]);
+      
+      setState(() => _lastPrintResult = 'Résultat: ${result.name}');
+    } catch (e) {
+      setState(() => _lastPrintResult = 'Erreur: $e');
+    }
+  }
+
+  Future<void> printTestAlignment() async {
+    try {
+      setState(() => _lastPrintResult = 'Test alignement...');
+      
+      final result = await Ciontek.printer.printLines([
+      const CiontekTextLine(
+        text: 'TEST ALIGNEMENT',
+        bold: true,
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekTextLine(
+        text: '===========================',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekFeedLine(lines: 1),
+      
+      // Test gauche
+      const CiontekTextLine(
+        text: 'Gauche (defaut)',
+        bold: true,
+      ),
+      const CiontekTextLine(
+        text: 'Court',
+      ),
+      const CiontekTextLine(
+        text: 'Texte moyen test',
+      ),
+      const CiontekTextLine(
+        text: 'Texte long pour test',
+      ),
+      const CiontekFeedLine(lines: 1),
+      
+      // Test centre
+      const CiontekTextLine(
+        text: 'Centre',
+        bold: true,
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekTextLine(
+        text: 'Court',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekTextLine(
+        text: 'Texte moyen test',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekTextLine(
+        text: 'Texte long pour test',
+        alignMode: CiontekAlignMode.center,
+      ),
+      const CiontekFeedLine(lines: 1),
+      
+      // Test droite
+      const CiontekTextLine(
+        text: 'Droite',
+        bold: true,
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekTextLine(
+        text: 'Court',
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekTextLine(
+        text: 'Moyen test',
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekTextLine(
+        text: 'Long pour test',
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekTextLine(
+        text: '10.50 EUR',
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekTextLine(
+        text: '100.00 EUR',
+        alignMode: CiontekAlignMode.right,
+      ),
+      const CiontekFeedLine(lines: 1),
+      
+      // Test séparateurs
+      const CiontekTextLine(
+        text: 'Separateurs',
+        bold: true,
+      ),
+      const CiontekTextLine(
+        text: '===========================',
+      ),
+      const CiontekTextLine(
+        text: '---------------------------',
+      ),
+      
+      const CiontekFeedLine(lines: 3),
+      ]);
+      
+      setState(() => _lastPrintResult = 'Résultat: ${result.name}');
+    } catch (e) {
+      setState(() => _lastPrintResult = 'Erreur: $e');
+    }
   }
 
   Future<void> startScan() async {
@@ -84,6 +372,21 @@ class _MyAppState extends State<MyApp> {
                 onPressed: printTest,
                 child: const Text(
                   'Print something!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  side: BorderSide.none,
+                ),
+                onPressed: printTestAlignment,
+                child: const Text(
+                  'Test Alignment',
                   style: TextStyle(
                     fontSize: 20,
                     color: Colors.white,
@@ -125,6 +428,21 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ],
               ),
+              const SizedBox(height: 12),
+              if (_lastPrintResult != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    _lastPrintResult!,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: _lastPrintResult!.contains('Erreur') 
+                        ? Colors.red 
+                        : Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               const SizedBox(height: 12),
               if (_lastScan != null)
                 Padding(

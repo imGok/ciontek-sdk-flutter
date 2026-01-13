@@ -14,6 +14,7 @@ class PrinterMethodHandler(
         when (call.method) {
             "setFontPath" -> handleSetFontPath(call, result)
             "print" -> handlePrint(call, result)
+            "printLines" -> handlePrintLines(call, result)
             "getPrinterStatus" -> handleGetPrinterStatus(result)
             else -> result.notImplemented()
         }
@@ -54,7 +55,60 @@ class PrinterMethodHandler(
         val map = maybeMap as Map<String, Any>
         val line = PrintLine.fromMap(map)
         CiontekPrintHelper.printLine(line)
+        CiontekPrintHelper.printLines(listOf(line))
         result.success(0)  // Success
+    }
+
+    private fun handlePrintLines(call: MethodCall, result: Result) {
+        val status = posApiHelper.PrintCheckStatus()
+        
+        // Check printer status first
+        when (status) {
+            -1 -> {
+                result.success(-1)  // No paper
+                return
+            }
+            -2 -> {
+                result.success(-2)  // Too hot
+                return
+            }
+            -3 -> {
+                result.success(-3)  // Low battery
+                return
+            }
+        }
+
+        // Printer is ready, proceed with printing
+        CiontekPrintHelper.setupPrinter()
+        
+        val arguments = call.arguments as? Map<*, *>
+        if (arguments == null) {
+            result.error("INVALID_ARGUMENT", "Arguments map is required", null)
+            return
+        }
+        
+        val linesData = arguments["lines"] as? List<*>
+        if (linesData == null) {
+            result.error("INVALID_ARGUMENT", "Lines list is required", null)
+            return
+        }
+
+        try {
+            val lines = linesData.mapNotNull { lineData ->
+                @Suppress("UNCHECKED_CAST")
+                (lineData as? Map<String, Any>)?.let { PrintLine.fromMap(it) }
+            }
+            
+            if (lines.isEmpty()) {
+                result.error("INVALID_ARGUMENT", "No valid lines to print", null)
+                return
+            }
+
+            CiontekPrintHelper.printLines(lines)
+            result.success(0)  // Success
+        } catch (e: Exception) {
+            result.error("PRINT_ERROR", "Error printing lines: ${e.message}", null)
+        }
     }
 
     private fun handleSetFontPath(call: MethodCall, result: Result) {
