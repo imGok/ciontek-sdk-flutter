@@ -1,6 +1,6 @@
 name: ciontek
 description: "Wrapper for Ciontek SDK, with this package you can print text"
-version: 0.0.6+2026011301
+version: 0.0.7+2026011301
 homepage: https://github.com/imGok/ciontek-sdk-flutter
 
 environment:
