@@ -18,6 +18,7 @@ object CiontekPrintHelper {
     private const val DEFAULT_BARCODE_WIDTH = 360
     private const val DEFAULT_BARCODE_HEIGHT = 120
     private const val DEFAULT_QR_SIZE = 256
+    private const val LINE_WIDTH = 28  // Width for 58mm thermal printer with 24x24 font
 
     @Synchronized
     fun setFontPath(path: String) {
@@ -33,7 +34,8 @@ object CiontekPrintHelper {
     @Synchronized
     fun setupPrinter() {
         // Always initialize before a print job
-        posApiHelper.PrintInit()
+        // PrintInit(type, fontWidth, fontHeight, flags)
+        posApiHelper.PrintInit(2, 24, 24, 0x33)
         
         // Set font size
         posApiHelper.PrintSetFont(24.toByte(), 24.toByte(), 24.toByte())
@@ -56,6 +58,39 @@ object CiontekPrintHelper {
         }
         
         initialized = true
+    }
+
+    /**
+     * Format text with manual alignment by adding spaces
+     */
+    private fun formatTextWithAlignment(text: String, alignment: Int): String {
+        val textLength = text.length
+        
+        return when (alignment) {
+            ALIGN_LEFT -> {
+                // Left alignment: just return the text
+                text
+            }
+            ALIGN_CENTER -> {
+                // Center alignment: add spaces on both sides
+                val spacesNeeded = (LINE_WIDTH - textLength) / 2
+                if (spacesNeeded > 0) {
+                    " ".repeat(spacesNeeded) + text
+                } else {
+                    text
+                }
+            }
+            ALIGN_RIGHT -> {
+                // Right alignment: add spaces on the left
+                val spacesNeeded = LINE_WIDTH - textLength
+                if (spacesNeeded > 0) {
+                    " ".repeat(spacesNeeded) + text
+                } else {
+                    text
+                }
+            }
+            else -> text
+        }
     }
 
     @Synchronized
@@ -82,6 +117,14 @@ object CiontekPrintHelper {
     fun printLine(line: PrintLine) {
         when (line.type) {
             "TEXT" -> {
+                // Determine alignment
+                val alignment = when (line.alignMode?.uppercase()) {
+                    "LEFT" -> ALIGN_LEFT
+                    "CENTER" -> ALIGN_CENTER
+                    "RIGHT" -> ALIGN_RIGHT
+                    else -> ALIGN_LEFT
+                }
+                
                 // Set text properties
                 posApiHelper.PrintSetBold(if (line.bold) 1 else 0)
                 posApiHelper.PrintSetUnderline(if (line.underline) 1 else 0)
@@ -89,20 +132,11 @@ object CiontekPrintHelper {
                 val gray = line.textGray.coerceIn(1, 5)
                 posApiHelper.PrintSetGray(gray)
                 
-                // Use PrintTableText for alignment support
-                val alignment = when (line.alignMode?.uppercase()) {
-                    "LEFT" -> 0
-                    "CENTER" -> 1
-                    "RIGHT" -> 2
-                    else -> 0
-                }
+                // Format text with manual alignment by adding spaces
+                val formattedText = formatTextWithAlignment(line.text, alignment)
                 
-                // Create a single column table with the desired alignment
-                posApiHelper.PrintTableText(
-                    arrayOf(line.text),
-                    intArrayOf(10),
-                    intArrayOf(alignment)
-                )
+                // Print the formatted text
+                posApiHelper.PrintStr(formattedText + "\n")
             }
             "QR_CODE" -> {
                 val size = line.size ?: DEFAULT_QR_SIZE
@@ -147,11 +181,12 @@ object CiontekPrintHelper {
         // Initialize printer for this print job
         setupPrinter()
         
+        // Print all lines
         for (line in lines) {
             printLine(line)
         }
         
-        // Start the print job
+        // Start the print job - this actually sends the data to the printer
         posApiHelper.PrintStart()
     }
 

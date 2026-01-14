@@ -45,7 +45,6 @@ class PrinterMethodHandler(
         }
 
         // Printer is ready, proceed with printing
-        CiontekPrintHelper.setupPrinter()
         val maybeMap = call.arguments as? Map<*, *>
         if (maybeMap == null) {
             result.error("INVALID_ARGUMENT", "Line map is required", null)
@@ -54,7 +53,7 @@ class PrinterMethodHandler(
         @Suppress("UNCHECKED_CAST")
         val map = maybeMap as Map<String, Any>
         val line = PrintLine.fromMap(map)
-        CiontekPrintHelper.printLine(line)
+        // Use printLines which handles setup and PrintStart correctly
         CiontekPrintHelper.printLines(listOf(line))
         result.success(0)  // Success
     }
@@ -79,8 +78,6 @@ class PrinterMethodHandler(
         }
 
         // Printer is ready, proceed with printing
-        CiontekPrintHelper.setupPrinter()
-        
         val arguments = call.arguments as? Map<*, *>
         if (arguments == null) {
             result.error("INVALID_ARGUMENT", "Arguments map is required", null)
@@ -104,6 +101,7 @@ class PrinterMethodHandler(
                 return
             }
 
+            // Print the lines (setupPrinter is called inside printLines)
             CiontekPrintHelper.printLines(lines)
             result.success(0)  // Success
         } catch (e: Exception) {

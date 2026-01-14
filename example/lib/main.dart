@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:ciontek/ciontek.dart';
-import 'package:ciontek/models/ciontek_print_line.dart';
 import 'package:ciontek/models/scan_result.dart';
 
 void main() {
