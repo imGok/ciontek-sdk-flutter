@@ -21,8 +21,8 @@ object CiontekPrintHelper {
     private const val DEFAULT_BARCODE_HEIGHT = 120
     private const val DEFAULT_QR_SIZE = 256
     private const val PRINTER_WIDTH = 32  // Width in characters for this printer
-    private const val LINE_WIDTH_NORMAL = 27  // Width for normal text (adjusted for 1 char overflow)
-    private const val LINE_WIDTH_BOLD = 25    // Width for bold text (adjusted for 3 char overflow)
+    private const val LINE_WIDTH_NORMAL = 32  // Width for normal text with smaller font (20x20)
+    private const val LINE_WIDTH_BOLD = 29    // Width for bold text (adjusted for 1 char overflow)
 
     @Synchronized
     fun setFontPath(path: String) {
@@ -39,7 +39,7 @@ object CiontekPrintHelper {
         if (initialized) {
             // Re-apply the font if printer already initialized
             if (file.exists()) {
-                posApiHelper.PrintSetFontTTF(path, 24.toByte(), 24.toByte())
+                posApiHelper.PrintSetFontTTF(path, 20.toByte(), 20.toByte())  // Use size 20
                 Log.d(TAG, "setFontPath: Font applied to initialized printer")
             } else {
                 Log.w(TAG, "setFontPath: Font file does not exist at $path")
@@ -54,11 +54,11 @@ object CiontekPrintHelper {
         Log.d(TAG, "setupPrinter: Starting printer initialization")
         // Always initialize before a print job
         // PrintInit(type, fontWidth, fontHeight, flags)
-        posApiHelper.PrintInit(2, 24, 24, 0x33)
+        posApiHelper.PrintInit(2, 20, 20, 0x33)  // Reduced from 24 to 20
         
-        // Set font size
-        posApiHelper.PrintSetFont(24.toByte(), 24.toByte(), 24.toByte())
-        Log.d(TAG, "setupPrinter: Default font size set")
+        // Set font size - reduced to fit more characters
+        posApiHelper.PrintSetFont(20.toByte(), 20.toByte(), 20.toByte())
+        Log.d(TAG, "setupPrinter: Font size set to 20x20")
         
         // Only set custom font if path is provided and file exists
         if (fontPath != null) {
@@ -67,7 +67,7 @@ object CiontekPrintHelper {
             Log.d(TAG, "setupPrinter: Custom font exists = ${file.exists()}")
             
             if (file.exists()) {
-                posApiHelper.PrintSetFontTTF(fontPath!!, 24.toByte(), 24.toByte())
+                posApiHelper.PrintSetFontTTF(fontPath!!, 20.toByte(), 20.toByte())
                 Log.d(TAG, "setupPrinter: Custom font applied successfully")
                 initialized = true
                 return
@@ -91,7 +91,7 @@ object CiontekPrintHelper {
         }
         
         if (availableFont != null) {
-            posApiHelper.PrintSetFontTTF(availableFont, 24.toByte(), 24.toByte())
+            posApiHelper.PrintSetFontTTF(availableFont, 20.toByte(), 20.toByte())
             Log.d(TAG, "setupPrinter: System monospace font applied: $availableFont")
         } else {
             Log.d(TAG, "setupPrinter: No monospace font found, using default")
@@ -182,8 +182,8 @@ object CiontekPrintHelper {
                 // Pass bold flag to adjust line width accordingly
                 val formattedText = formatTextWithAlignment(line.text, alignment, line.bold)
                 
-                // Print the formatted text
-                posApiHelper.PrintStr(formattedText + "\n")
+                // Print the formatted text (PrintStr handles line breaks internally)
+                posApiHelper.PrintStr(formattedText)
             }
             "QR_CODE" -> {
                 val size = line.size ?: DEFAULT_QR_SIZE
