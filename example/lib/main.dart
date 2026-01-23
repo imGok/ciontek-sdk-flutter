@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:ciontek/ciontek.dart';
+import 'package:ciontek/models/ciontek_print_line.dart';
 import 'package:ciontek/models/scan_result.dart';
 
 void main() {
@@ -25,6 +29,8 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    // Temporairement désactivé pour tester avec police système
+    // _setupPrinterFont();
     _scanSub = Ciontek.scanner.onScan.listen((e) {
       setState(() {
         _lastScan = e.data ??
@@ -34,6 +40,28 @@ class _MyAppState extends State<MyApp> {
                 '');
       });
     });
+  }
+
+  Future<void> _setupPrinterFont() async {
+    try {
+      // Load the font from assets
+      final byteData = await rootBundle.load('assets/fonts/ciontek-printer-font.ttf');
+      
+      // Use the app's cache directory (no permissions needed)
+      final directory = await getApplicationCacheDirectory();
+      final fontPath = '${directory.path}/ciontek-printer-font.ttf';
+      
+      // Write the font file to the device
+      final file = File(fontPath);
+      await file.writeAsBytes(byteData.buffer.asUint8List());
+      
+      debugPrint('Font saved to: $fontPath (${file.lengthSync()} bytes)');
+      
+      // Set the font path in the plugin
+      await Ciontek.printer.setFontPath(fontPath);
+    } catch (e) {
+      debugPrint('Error setting up printer font: $e');
+    }
   }
 
   @override
